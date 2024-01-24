@@ -5,24 +5,39 @@ option(WITH_ROS_EXAMPLES "Build ROS examples" OFF)
 
 list(APPEND CMAKE_PREFIX_PATH ${ADITOF_CMAKE_INSTALL_PREFIX}
      ${ADITOF_CMAKE_PREFIX_PATH})
-list(APPEND CMAKE_PREFIX_PATH "/usr/local;/opt/glog;/opt/protobuf;/opt/websockets" ${ADITOF_CMAKE_PREFIX_PATH})
-
+list(
+  APPEND
+  CMAKE_PREFIX_PATH
+  "/usr/local;/opt/glog;/opt/protobuf;/opt/websockets;/home/analog/Workspace/libs"
+  ${ADITOF_CMAKE_PREFIX_PATH})
 
 # Find catkin macros and libraries
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs dynamic_reconfigure roslib)
-find_package(aditof ${VERSION} REQUIRED)
-find_library(TOFI_COMPUTE
-  NAMES tofi_compute
-  PATHS /usr/lib)
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs dynamic_reconfigure
+                                        roslib)
+find_package(aditof 4.2.0 REQUIRED)
 
-generate_dynamic_reconfigure_options(
-  cfg/Aditof_roscpp.cfg
-)
+find_library(
+  TOFI_COMPUTE
+  NAMES tofi_compute
+  PATHS /home/analog/Workspace/libs)
+
+find_library(
+  TOFI_CONFIG
+  NAMES tofi_config
+  PATHS /home/analog/Workspace/libs)
+
+generate_dynamic_reconfigure_options(cfg/Aditof_roscpp.cfg)
 
 catkin_package(
-  INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp sensor_msgs dynamic_reconfigure roslib
-  DEPENDS aditof)
+  INCLUDE_DIRS
+  include
+  CATKIN_DEPENDS
+  roscpp
+  sensor_msgs
+  dynamic_reconfigure
+  roslib
+  DEPENDS
+  aditof)
 
 include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS}
                     ${aditof_INCLUDE_DIRS})
@@ -37,9 +52,13 @@ target_sources(aditof_camera_node
 target_link_libraries(aditof_camera_node aditof::aditof)
 target_link_libraries(aditof_camera_node ${catkin_LIBRARIES})
 
+target_link_libraries(aditof_camera_node
+                      /home/analog/Workspace/libs/libtofi_compute.so)
+target_link_libraries(aditof_camera_node
+                      /home/analog/Workspace/libs/libtofi_config.so)
+
 add_library(tofi_compute SHARED IMPORTED)
 target_link_libraries(aditof_camera_node)
-
 
 add_dependencies(aditof_camera_node ${PROJECT_NAME}_gencfg)
 
@@ -51,16 +70,17 @@ if(WITH_ROS_EXAMPLES)
                     ${SOURCES})
   target_sources(aditof_rviz_pcl
                  INTERFACE ${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME})
-  
-  
+
   target_link_libraries(aditof_rviz_pcl aditof::aditof)
   target_link_libraries(aditof_rviz_pcl ${catkin_LIBRARIES})
-  
+
 endif()
-## Copying config files and depth compute libraries from sdk/config, sdk/lib folders to build/examples/first-frame and build/first-frame/Debug or Release folders
-# FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/*)
+# Copying config files and depth compute libraries from sdk/config, sdk/lib
+# folders to build/examples/first-frame and build/first-frame/Debug or Release
+# folders FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/*)
 # install(FILES ${CONFIG_FILES} DESTINATION ${CMAKE_BINARY_DIR}/config/)
 # install(FILES ${CONFIG_FILES} DESTINATION lib/${PROJECT_NAME}/config/)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config DESTINATION /home/$ENV{USER}/.ros/)
-# file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+# file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config DESTINATION
+# /home/$ENV{USER}/.ros/) file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config
+# DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../)

@@ -61,7 +61,7 @@ void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 void DepthImageMsg::setMetadataMembers(int width, int height,
                                        ros::Time tStamp) {
     msg.header.stamp = tStamp;
-    msg.header.frame_id = "aditof_depth_img";
+    msg.header.frame_id = "adi_tof";
 
     msg.width = width;
     msg.height = height;
@@ -84,6 +84,10 @@ void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
         dataToRGBA8(0, 0x0fff, frameData);
     } else if (msg.encoding.compare(sensor_msgs::image_encodings::MONO16) ==
                0) {
+
+        //  irTo16bitGrayscale(frameData, msg.width, msg.height);
+        //  uint8_t *msgDataPtr = msg.data.data();
+        //  std::memcpy(msgDataPtr, frameData, msg.step * msg.height);
         memcpy(msg.data.data(), frameData, 2 * msg.width * msg.height);
     } else
         ROS_ERROR("Image encoding invalid or not available");

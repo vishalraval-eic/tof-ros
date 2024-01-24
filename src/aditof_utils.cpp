@@ -369,6 +369,16 @@ enum ModeTypes intToMode(int var) {
     case 3:
         newMode = ModeTypes::mode3;
         break;
+    case 4:
+        newMode = ModeTypes::mode4;
+        break;
+    case 5:
+        newMode = ModeTypes::mode5;
+        break;
+    case 6:
+        newMode = ModeTypes::mode6;
+        break;
+
     default:
         LOG(ERROR) << "Unrecognized mode type. Defaulting to mode1.";
         newMode = ModeTypes::mode1;
@@ -387,6 +397,13 @@ int modeToInt(ModeTypes mode) {
         return 2;
     case ModeTypes::mode3:
         return 3;
+    case ModeTypes::mode4:
+        return 4;
+    case ModeTypes::mode5:
+        return 5;
+    case ModeTypes::mode6:
+        return 6;
+
     default:
         LOG(ERROR) << "Wrong mode format";
     }

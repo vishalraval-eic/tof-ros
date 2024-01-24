@@ -70,6 +70,10 @@ void PublisherFactory::createNew(ModeTypes mode, ros::NodeHandle nHandle,
     aditof::CameraDetails *details_tmp = new aditof::CameraDetails;
     getCameraDataDetails(camera, *details_tmp);
 
+    img_publishers.emplace_back(
+        nHandle.advertise<sensor_msgs::CameraInfo>("aditof_camera_info", 5));
+    imgMsgs.emplace_back(new CameraInfoMsg(camera, frame, timeStamp));
+                LOG(INFO) << "Added camera info  publisher";
     for (auto iter : (*details_tmp).frameType.dataDetails) {
         if (!std::strcmp(iter.type.c_str(), "ir")) {
             img_publishers.emplace_back(
@@ -82,17 +86,23 @@ void PublisherFactory::createNew(ModeTypes mode, ros::NodeHandle nHandle,
             img_publishers.emplace_back(
                 nHandle.advertise<sensor_msgs::Image>("aditof_depth", 5));
             imgMsgs.emplace_back(new DepthImageMsg(
-                camera, frame, sensor_msgs::image_encodings::RGBA8, timeStamp));
+                camera, frame, sensor_msgs::image_encodings::MONO16,
+                timeStamp));
             LOG(INFO) << "Added depth publisher";
-        } else if (!std::strcmp(iter.type.c_str(), "xyz")) {
+        }
+        /*	
+	else if (!std::strcmp(iter.type.c_str(), "xyz")) {
             img_publishers.emplace_back(
                 nHandle.advertise<sensor_msgs::PointCloud2>("aditof_pcloud",
                                                             5));
             imgMsgs.emplace_back(new PointCloud2Msg(camera, frame, timeStamp));
             LOG(INFO) << "Added point_cloud publisher";
-        } else if (!std::strcmp(iter.type.c_str(), "embedded_header")) {
+        }
+       	else if (!std::strcmp(iter.type.c_str(), "embedded_header")) {
             // add embedded header publisher
-        } else if (!std::strcmp(iter.type.c_str(), "raw")) {
+        }
+	
+       	else if (!std::strcmp(iter.type.c_str(), "raw")) {
             img_publishers.emplace_back(
                 nHandle.advertise<sensor_msgs::Image>("aditof_raw", 5));
             imgMsgs.emplace_back(new RAWImageMsg(
@@ -100,6 +110,7 @@ void PublisherFactory::createNew(ModeTypes mode, ros::NodeHandle nHandle,
                 timeStamp));
             LOG(INFO) << "Added raw data publisher";
         }
+	*/
     }
 
     if (!streamOn) {

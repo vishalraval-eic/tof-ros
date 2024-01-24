@@ -58,7 +58,7 @@ void PointCloud2Msg::setMetadataMembers(int width, int height,
                                   "intensity", 1,
                                   sensor_msgs::PointField::UINT16);
     msg.header.stamp = tStamp;
-    msg.header.frame_id = "base_link";
+    msg.header.frame_id = "camera_link_optical";
 
     msg.width = width;
     msg.height = height;
